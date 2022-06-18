@@ -2,6 +2,8 @@
 ![image](https://user-images.githubusercontent.com/97752074/174448849-3a3cc86e-d9db-4feb-848f-cb8b3f13f6c1.png)
 # Modes
 ![image](https://user-images.githubusercontent.com/97752074/174448864-aba9d223-ef33-4dac-9b17-d39ec81fa02a.png)
+![image](https://user-images.githubusercontent.com/97752074/174449779-b063069a-a89f-4134-bdb6-fe9cfcb276a7.png)
+
 
 # Troubleshooting JavaScript
 Crushing programming bugs
