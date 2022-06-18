@@ -1,5 +1,4 @@
-// we always start with a module to encapsulate our own code
-// is is called an IIFE (Immediately-Invoked Function Expression)
+
 
 (() => {
 	// collect ALL of the elements that we want the user to interact with and also elements that to change
@@ -9,18 +8,10 @@
 		pzlPieces = document.querySelectorAll('.puzzle-pieces img'),
 		dropZones = document.querySelectorAll('.drop-zone');
 
-	/*
-	theThumbnails = [
-			<img src="images/buttonZero.jpg" data-bgref="0" alt="thumbnail">
-			<img src="images/buttonOne.jpg" data-bgref="1" alt="thumbnail">
-	    	<img src="images/buttonTwo.jpg" data-bgref="2" alt="thumbnail">
-			<img src="images/buttonThree.jpg" data-bgref="3" alt="thumbnail">
-	]
-	*/
-
 	const imageNames = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
 	
 	function changeImageSet() {
+		
 		gameBoard.style.backgroundImage = `url(images/backGround${this.dataset.bgref}.jpg)`;
 
 		let clickedThumb = this; // this is the element (thumbnail) we clicked on
@@ -31,6 +22,8 @@
 		// update the draggable piece's src attribute one at a time
 		pzlPieces.forEach((piece, index) => {
 			piece.src = `images/${imageNames[index] + clickedThumb.dataset.bgref}.jpg`;
+			// it will reset when you clicked anotherbackground of the puzzle
+		document.querySelector('.puzzle-pieces').append(piece)
 		});
 	}
 
@@ -50,7 +43,8 @@
 	function allowDrop(event) {
 		event.preventDefault();
 		let droppedElId = event.dataTransfer.getData('draggedEl');
-        if (this.childElementCount > 0){
+       // Puzzle will not stack in one location
+		if (this.childElementCount > 0){
 			return;
 		}
 		// retrieve the dragged el by its ID, and then put it inside the current drop zone
@@ -71,3 +65,4 @@
 		zone.addEventListener('drop', allowDrop);
 	});
 })();
+
