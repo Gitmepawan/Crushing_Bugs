@@ -1,44 +1,73 @@
-// drum kit: press a key to play the sound. use JavaScript to retrieve the data-key attribute and then use that as a selector to find the matching audio file and play it!
+// we always start with a module to encapsulate our own code
+// is is called an IIFE (Immediately-Invoked Function Expression)
 
 (() => {
-    console.log('music player script file');
+	// collect ALL of the elements that we want the user to interact with and also elements that to change
+	// JS holds these in memory so that it can access them later (these are elements in the HTML)
+	let theThumbnails = document.querySelectorAll('#buttonHolder img'),
+		gameBoard = document.querySelector('.puzzle-board'),
+		pzlPieces = document.querySelectorAll('.puzzle-pieces img'),
+		dropZones = document.querySelectorAll('.drop-zone');
 
-    let theKeys = document.querySelectorAll('.key');
+	/*
+	theThumbnails = [
+			<img src="images/buttonZero.jpg" data-bgref="0" alt="thumbnail">
+			<img src="images/buttonOne.jpg" data-bgref="1" alt="thumbnail">
+	    	<img src="images/buttonTwo.jpg" data-bgref="2" alt="thumbnail">
+			<img src="images/buttonThree.jpg" data-bgref="3" alt="thumbnail">
+	]
+	*/
 
-    function logKeyboardKeyCode(event) {
-        // event is an object that gets generated whenever the user presses a keyboard key -> it has lots of useful information inside of it (all about the event itself)
+	const imageNames = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
+	
+	function changeImageSet() {
+		gameBoard.style.backgroundImage = `url(images/backGround${this.dataset.bgref}.jpg)`;
 
-        // find the audio element that matches the keyboard keyCode (which one did the user press?)
+		let clickedThumb = this; // this is the element (thumbnail) we clicked on
 
-        // querySelector can take any valid CSS selector, including attributes
-        let targetAudio = document.querySelector(`audio[data-key="${event.keyCode}"]`),
-            targetDiv = document.querySelector(`div[data-key="${event.keyCode}"]`);
+		// debugger; 
+		// this will pause code execution on this line. like pushing pause on Netflix / Amazon Prime
 
-        // the return statement is like an ejector button. kills the code at this point, and nothing else will run
+		// update the draggable piece's src attribute one at a time
+		pzlPieces.forEach((piece, index) => {
+			piece.src = `images/${imageNames[index] + clickedThumb.dataset.bgref}.jpg`;
+		});
+	}
 
-        // the if statement evaluates to true or false; if the condition is true, then the return statement is executed which stops (exits) the function. Nothing else will run below that line.
+	function allowDrag(event) {
+		console.log('started draggin me');
 
-        // this will kill any errors, and make SURE that there's a matching audio element to play
+		// create a reference to the element we're dragging so we can retrieve it later
+		event.dataTransfer.setData('draggedEl', this.id);
+	}
 
-        // the ! is a NOT logical operator (look on MDN for the definition) -> it means targetAudio is null / doesn't exist
-        if (!targetAudio) { return }
+	function allowDragOver(event) {
+		// override default behaviour on certain elements when an event happens
+		event.preventDefault();
+		console.log('started draggin over me');
+	}
 
-        targetAudio.currentTime = 0;
-        targetAudio.play();
+	function allowDrop(event) {
+		event.preventDefault();
+		let droppedElId = event.dataTransfer.getData('draggedEl');
+        if (this.childElementCount > 0){
+			return;
+		}
+		// retrieve the dragged el by its ID, and then put it inside the current drop zone
+		this.appendChild(document.querySelector(`#${droppedElId}`));
 
-        // the classList is built-in JavaScript interface that lets you access the CSS classes on any element - you can add, remove, toggle CSS classes dynamically, which changes how they look on the page
-        targetDiv.classList.add('playing');
+		// MDN JavaScript template string
+	}
 
-        //debugger;
-    }
+	// how to we want the user to interact with the elements that we collected earlier?
+	// events are things like clikcs, drags, double-clicks, keypresses... all the ways that a user can interact with a mouse, a keyboard etc
+ 
+	theThumbnails.forEach(image => image.addEventListener('click', changeImageSet));
+	pzlPieces.forEach(piece => piece.addEventListener('dragstart', allowDrag));
 
-    // the 'this' keyword refers to the div that just finished transitioning (animating)
-    function removeHighlight() { this.classList.remove('playing'); }
-
-    // add some event handling for keyboard events
-    window.addEventListener('keyup', logKeyboardKeyCode);
-
-    // transitionend is fired whenever a CSS transition completes, which tells us that we can now remove the highlight we added when we pressed the keyboard key
-    theKeys.forEach(key => key.addEventListener('transitionend', removeHighlight));
-    
+	// set up the drop zone event handling
+	dropZones.forEach(zone => {
+		zone.addEventListener('dragover', allowDragOver);
+		zone.addEventListener('drop', allowDrop);
+	});
 })();
